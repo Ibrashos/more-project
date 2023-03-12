@@ -1,5 +1,3 @@
-
-
 import telebot
 from datetime import datetime
 import os
