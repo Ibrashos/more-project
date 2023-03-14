@@ -2,7 +2,7 @@ import telebot
 import requests
 
 import sqlite3 as sq #При желании убрать
-def add_user(id):
+def add_user(id): #Эта функция здесь по сути не нужна, добавлена с целью сбора tg.id, можно закоментировать
     sql = f"INSERT INTO users (tg_id) VALUES({id})"
     with sq.connect("users.db") as con:
         cur = con.cursor()
@@ -77,7 +77,7 @@ def get_text_messages(message):
         bot.send_message(message.chat.id, f'☁Погода на сегодня☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == "завтра":
         temp = temperature(1)
-        bot.send_message(message.chat.id, f'☁Погода на завтрап☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        bot.send_message(message.chat.id, f'☁Погода на завтра☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == f"{number[2]} число":
         temp = temperature(2)
         bot.send_message(message.chat.id, f'☁Погода на {number[2]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
