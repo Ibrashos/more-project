@@ -1,6 +1,10 @@
 import telebot
 import requests
 
+from telebot.async_telebot import AsyncTeleBot
+import asyncio
+import aiohttp
+
 import sqlite3 as sq #При желании убрать
 def add_user(id): #Эта функция здесь по сути не нужна, добавлена с целью сбора tg.id, можно закоментировать
     sql = f"INSERT INTO users (tg_id) VALUES({id})"
@@ -8,7 +12,7 @@ def add_user(id): #Эта функция здесь по сути не нужн�
         cur = con.cursor()
         cur.execute(sql)
 
-bot = telebot.TeleBot("5721458659:AAEPnYmZTy4LJap8M__AngXbyGj7ZwSRFjo")
+bot = AsyncTeleBot("5721458659:AAEPnYmZTy4LJap8M__AngXbyGj7ZwSRFjo")
 
 def weather(): #Подключаемся к API и забираем данные
     response = requests.get("https://api.open-meteo.com/v1/forecast?latitude=42.98&longitude=47.50&hourly=temperature_2m")
@@ -59,7 +63,7 @@ def temperature(num): #Высчитываем значения температ�
     return len_temp
 
 @bot.message_handler(commands=['start'])
-def start_message(message):
+async def start_message(message):
     add_user(message.chat.id)
     day = split_day()
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -67,31 +71,31 @@ def start_message(message):
     for i in range(7):
         item.append(telebot.types.KeyboardButton(f"{day[i]} число"))
     markup.add('Сегодня', 'Завтра', item[2], item[3],item[4],item[5],item[6])
-    bot.send_message(message.chat.id, 'Выберите день на который вам нужна погода', reply_markup=markup)
+    await bot.send_message(message.chat.id, 'Выберите день на который вам нужна погода', reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
-def get_text_messages(message):
+async def get_text_messages(message):
     number = split_day()
     if message.text.lower() == "сегодня":
         temp = temperature(0)
-        bot.send_message(message.chat.id, f'☁Погода на сегодня☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на сегодня☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == "завтра":
         temp = temperature(1)
-        bot.send_message(message.chat.id, f'☁Погода на завтра☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на завтра☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == f"{number[2]} число":
         temp = temperature(2)
-        bot.send_message(message.chat.id, f'☁Погода на {number[2]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на {number[2]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == f"{number[3]} число":
         temp = temperature(3)
-        bot.send_message(message.chat.id, f'☁Погода на {number[3]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на {number[3]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == f"{number[4]} число":
         temp = temperature(4)
-        bot.send_message(message.chat.id, f'☁Погода на {number[4]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на {number[4]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == f"{number[5]} число":
         temp = temperature(5)
-        bot.send_message(message.chat.id, f'☁Погода на {number[5]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на {number[5]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
     elif message.text.lower() == f"{number[6]} число":
         temp = temperature(6)
-        bot.send_message(message.chat.id, f'☁Погода на {number[6]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
+        await bot.send_message(message.chat.id, f'☁Погода на {number[6]} число☁\nУтро: {int(temp[0])}°C\nДень: {int(temp[1])}°C\nВечер: {int(temp[2])}°C')
 
-bot.infinity_polling()
+asyncio.run(bot.infinity_polling())
