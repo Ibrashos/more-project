@@ -22,7 +22,7 @@ from PIL import Image
 #                 (123, mes[0], mes[1]))  # выполнить команду в базе данных
 #     con.commit()
 
-bot = telebot.TeleBot("5721458659:AAEPnYmZTy4LJap8M__AngXbyGj7ZwSRFjo")
+bot = telebot.TeleBot("")
 start = datetime.now()
 # Информация о пользователе
 name = getpass.getuser()
